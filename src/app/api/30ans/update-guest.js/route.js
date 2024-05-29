@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server';
 import fetch from 'node-fetch';
 
 export async function PUT(req) {
-  const { eventId, participantId } = req.nextUrl.searchParams;
+  const { searchParams } = new URL(req.url);
+  const eventId = searchParams.get('eventId');
+  const participantId = searchParams.get('participantId');
   const { auth_token, newData } = await req.json();
 
   // Ajouter les en-têtes CORS
@@ -27,7 +29,7 @@ export async function PUT(req) {
   }
 }
 
-export async function OPTIONS(req) {
+export async function OPTIONS() {
   return new NextResponse(null, {
     headers: {
       'Access-Control-Allow-Origin': '*', // Vous pouvez restreindre à un domaine spécifique
