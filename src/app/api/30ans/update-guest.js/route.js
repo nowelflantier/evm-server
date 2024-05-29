@@ -14,7 +14,7 @@ export async function PUT(req) {
   headers.set('Access-Control-Allow-Headers', 'Content-Type');
 
   try {
-    const response = await fetch(`https://app.eventmaker.io/events/${eventId}/guests/${participantId}.json&auth_token=${auth_token}`, {
+    const response = await fetch(`https://app.eventmaker.io/api/v1/events/${eventId}/guests/${participantId}.json&auth_token=${auth_token}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
