@@ -5,6 +5,12 @@ export async function PUT(req) {
   const { eventId, participantId } = req.nextUrl.searchParams;
   const { auth_token, newData } = await req.json();
 
+  // Ajouter les en-têtes CORS
+  const headers = new Headers();
+  headers.set('Access-Control-Allow-Origin', '*'); // Vous pouvez restreindre à un domaine spécifique
+  headers.set('Access-Control-Allow-Methods', 'OPTIONS, PUT');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type');
+
   try {
     const response = await fetch(`https://app.eventmaker.io/events/${eventId}/guests/${participantId}.json&auth_token=${auth_token}`, {
       method: 'PUT',
@@ -14,9 +20,19 @@ export async function PUT(req) {
       body: JSON.stringify(newData)
     });
     const data = await response.json();
-    return NextResponse.json(data, { status: response.status });
+    return new NextResponse(JSON.stringify(data), { headers, status: response.status });
   } catch (error) {
     console.error('Erreur lors de la mise à jour du participant', error);
-    return NextResponse.json({ error: 'Erreur interne du serveur' }, { status: 500 });
+    return new NextResponse(JSON.stringify({ error: 'Erreur interne du serveur' }), { headers, status: 500 });
   }
+}
+
+export async function OPTIONS(req) {
+  return new NextResponse(null, {
+    headers: {
+      'Access-Control-Allow-Origin': '*', // Vous pouvez restreindre à un domaine spécifique
+      'Access-Control-Allow-Methods': 'OPTIONS, PUT',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    }
+  });
 }
