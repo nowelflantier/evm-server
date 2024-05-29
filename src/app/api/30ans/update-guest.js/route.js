@@ -7,9 +7,8 @@ export async function PUT(req) {
   const participantId = searchParams.get('participantId');
   const { auth_token, newData } = await req.json();
 
-  // Ajouter les en-têtes CORS
   const headers = new Headers();
-  headers.set('Access-Control-Allow-Origin', '*'); // Vous pouvez restreindre à un domaine spécifique
+  headers.set('Access-Control-Allow-Origin', '*');
   headers.set('Access-Control-Allow-Methods', 'OPTIONS, PUT');
   headers.set('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -21,18 +20,23 @@ export async function PUT(req) {
       },
       body: JSON.stringify(newData)
     });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
     const data = await response.json();
-    return new NextResponse(JSON.stringify(data), { headers, status: response.status });
+    return NextResponse.json(data, { headers, status: response.status });
   } catch (error) {
     console.error('Erreur lors de la mise à jour du participant', error);
-    return new NextResponse(JSON.stringify({ error: 'Erreur interne du serveur' }), { headers, status: 500 });
+    return NextResponse.json({ error: 'Erreur interne du serveur' }, { headers, status: 500 });
   }
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
+  return NextResponse.json(null, {
     headers: {
-      'Access-Control-Allow-Origin': '*', // Vous pouvez restreindre à un domaine spécifique
+      'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'OPTIONS, PUT',
       'Access-Control-Allow-Headers': 'Content-Type'
     }
