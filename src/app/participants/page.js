@@ -49,14 +49,13 @@ const Participants = () => {
     };
 
     fetchParticipants();
-  }, [companyNameFilter, statusFilter]); // Add companyNameFilter and statusFilter as dependencies
+  }, [companyNameFilter, statusFilter]); 
 
   const handleCopyInvitation = async (firstName, participantId) => {
     try {
       const response = await fetch(`/api/30ans/participants/${participantId}`);
       const data = await response.json();
       
-  
       if (!response.ok) {
         throw new Error(
           data.error ||
@@ -80,48 +79,30 @@ const Participants = () => {
   };
 
   const copyToClipboard = (text) => {
-    navigator.clipboard
-        .writeText(text)
-        .then(() => {
-          showToast("Le texte d'invitation a été copié dans le presse-papier.");
-        })
-        .catch((err) => {
-          console.error(
-            "Erreur lors de la copie du texte dans le presse-papier :",
-            err
-          );
-        });
-    // if (navigator.clipboard) {
-    //   navigator.clipboard
-    //     .writeText(text)
-    //     .then(() => {
-    //       showToast("Le texte d'invitation a été copié dans le presse-papier.");
-    //     })
-    //     .catch((err) => {
-    //       console.error(
-    //         "Erreur lors de la copie du texte dans le presse-papier :",
-    //         err
-    //       );
-    //     });
-    // } else {
-    //   const textArea = document.createElement("textarea");
-    //   textArea.value = text;
-    //   textArea.style.position = "fixed"; // Avoid scrolling to bottom of page in MS Edge.
-    //   textArea.style.opacity = "0";
-    //   document.body.appendChild(textArea);
-    //   textArea.focus();
-    //   textArea.select();
-    //   try {
-    //     const successful = document.execCommand("copy",true,"");
-    //     const msg = successful
-    //       ? "Le texte d'invitation a été copié dans le presse-papier."
-    //       : "Échec de la copie du texte";
-    //     showToast(msg);
-    //   } catch (err) {
-    //     console.error("Erreur lors de la copie du texte :", err);
-    //   }
-    //   document.body.removeChild(textArea);
-    // }
+    const span = document.createElement("span");
+    span.textContent = text;
+    span.style.position = "fixed";
+    span.style.opacity = 0;
+    document.body.appendChild(span);
+
+    const range = document.createRange();
+    const selection = window.getSelection();
+    range.selectNodeContents(span);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    try {
+      const successful = document.execCommand('copy');
+      const msg = successful
+        ? "Le texte d'invitation a été copié dans le presse-papier."
+        : "Échec de la copie du texte";
+      showToast(msg);
+    } catch (err) {
+      console.error("Erreur lors de la copie du texte :", err);
+    }
+
+    selection.removeAllRanges();
+    document.body.removeChild(span);
   };
 
   const showToast = (message) => {
@@ -131,8 +112,6 @@ const Participants = () => {
       close: false,
       gravity: "bottom",
       position: "center",
-      // backgroundColor: "#E0B0B8",
-      stopOnFocus: true,
       style: {
         background: "linear-gradient(to right, #E000B8, #E0B0B8)",
         textAlign: "center",
