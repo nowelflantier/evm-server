@@ -8,6 +8,7 @@ const ParticipantModal = ({ participant, companyName, setCompanyName, onSaveChan
           &times;
         </span>
         <h2>Modifier le participant</h2>
+        <h3>{participant.firstName} {participant.lastName}</h3> 
         <div className="participant-details">
           <label>
             <input

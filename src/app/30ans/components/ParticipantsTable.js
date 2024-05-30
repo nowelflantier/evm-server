@@ -19,11 +19,11 @@ const ParticipantsTable = ({ participants, onCopyInvitation, onEditParticipant }
             <td>{participant.status}</td>
             <td>
               <button onClick={() => onCopyInvitation(participant.firstName, participant.id)}>
-                <i className="fas fa-copy"></i>
+                <i className="fas fa-circle-plus"></i>
               </button>
-              <button onClick={() => onEditParticipant(participant.id)}>
+              {/* <button onClick={() => onEditParticipant(participant.id)}>
                 <i className="fas fa-edit"></i>
-              </button>
+              </button> */}
             </td>
           </tr>
         ))}

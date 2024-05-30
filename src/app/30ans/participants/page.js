@@ -17,15 +17,27 @@ const Participants = () => {
   const [companyNameFilter, setCompanyNameFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [companyName, setCompanyName] = useState(false);
+  const [filtersLoaded, setFiltersLoaded] = useState(false);
 
   useEffect(() => {
+    // Load filters from localStorage on mount
+    const savedCompanyNameFilter = localStorage.getItem("companyNameFilter");
+    const savedStatusFilter = localStorage.getItem("statusFilter");
+    if (savedCompanyNameFilter) setCompanyNameFilter(savedCompanyNameFilter);
+    if (savedStatusFilter) setStatusFilter(savedStatusFilter);
+    setFiltersLoaded(true); // Indicate that filters have been loaded
+  }, []);
+
+  useEffect(() => {
+    if (!filtersLoaded) return; // Only load participants after filters have been loaded
+
     const getParticipants = async () => {
       const data = await fetchParticipants(companyNameFilter, statusFilter);
       setParticipants(data);
     };
 
     getParticipants();
-  }, [companyNameFilter, statusFilter]);
+  }, [companyNameFilter, statusFilter, filtersLoaded]);
 
   const handleCopyInvitation = async (firstName, participantId) => {
     const participant = await fetchParticipantDetails(participantId);
@@ -67,6 +79,9 @@ const Participants = () => {
     if (success) {
       showToast("Les modifications ont été enregistrées avec succès.");
       setSelectedParticipant(null);
+      setTimeout(() => {
+        window.location.reload()
+      }, 1000); // Recharger la page après 1s pour mettre à jour la liste des participants
     }
   };
 
