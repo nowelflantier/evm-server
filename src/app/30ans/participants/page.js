@@ -13,6 +13,7 @@ const Participants = () => {
   const [filter, setFilter] = useState("");
   const [selectedParticipant, setSelectedParticipant] = useState(null);
   const [selectedInvitationText, setSelectedInvitationText] = useState("");
+  const [selectedParticipantId, setSelectedParticipantId] = useState(null);
   const [companyNameFilter, setCompanyNameFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [companyName, setCompanyName] = useState(false);
@@ -37,6 +38,7 @@ const Participants = () => {
       
       if (isMobileDevice()) {
         setSelectedInvitationText(invitationText);
+        setSelectedParticipantId(participantId);
       } else {
         copyToClipboard(invitationText);
       }
@@ -44,11 +46,18 @@ const Participants = () => {
   };
 
   const handleEditParticipant = async (participantId) => {
-    const participant = await fetchParticipantDetails(participantId);
-    if (participant) {
-      setSelectedParticipant(participant);
-      setCompanyName(participant.company_name === "true");
-    }
+    // Fermer la modale de copie avant d'ouvrir la modale de modification
+    setSelectedInvitationText("");
+    setSelectedParticipantId(null);
+
+    // Attendre un moment pour s'assurer que la modale de copie est fermée
+    setTimeout(async () => {
+      const participant = await fetchParticipantDetails(participantId);
+      if (participant) {
+        setSelectedParticipant(participant);
+        setCompanyName(participant.company_name === "true");
+      }
+    }, 300); // Attente de 300ms, ajuster si nécessaire
   };
 
   const handleSaveChanges = async () => {
@@ -64,6 +73,7 @@ const Participants = () => {
   const closeModal = () => {
     setSelectedParticipant(null);
     setSelectedInvitationText("");
+    setSelectedParticipantId(null);
   };
 
   const filteredParticipants = participants.filter(
@@ -105,8 +115,9 @@ const Participants = () => {
       {selectedInvitationText && (
         <CopyInvitationModal
           invitationText={selectedInvitationText}
+          participantId={selectedParticipantId}
           onCloseModal={closeModal}
-          onEditParticipant={() => handleEditParticipant(selectedParticipant?.id)}
+          onEditParticipant={() => handleEditParticipant(selectedParticipantId)}
         />
       )}
     </div>

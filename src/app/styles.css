@@ -107,9 +107,7 @@ button:focus {
   outline: none;
 }
 
-button:last-child {
-  color: #595858;
-}
+
 
 button:last-child:hover {
   color: #0b0b0b;
@@ -160,7 +158,8 @@ button:last-child:hover {
   display: flex;
   justify-content: center;
   margin-top: 20px;
-  background-color: lightseagreen;
+  background-color: #02366f;
+  color: whitesmoke;
 }
 
 .close {

@@ -28,7 +28,7 @@ export const showToast = (message) => {
     text: message,
     duration: 3000,
     close: false,
-    gravity: "bottom",
+    gravity: "top",
     position: "center",
     stopOnFocus: true,
     style: {

@@ -31,25 +31,25 @@
   }
   
   .invitation-text {
-    margin: 20px 0;
+    /* margin: 20px 0; */
     text-align: left;
-    background-color: #ededed;
-    padding: 10px;
-    border-radius: 10px;
+    white-space: pre-line; /* Preserve whitespace and line breaks */
+    padding: 15px;
+    border-radius: 15px;
+    background-color: #dadada;
   }
   
   .modal-buttons {
     display: flex;
     justify-content: center;
     gap: 10px;
-    
-    
+    /* margin-top: 20px; */
   }
   
   .modal-buttons .cta {
     padding: 10px 20px;
     border: none;
-    background-color: #0c4786;
+    background-color: #02366f;
     color: white;
     border-radius: 5px;
     cursor: pointer;
