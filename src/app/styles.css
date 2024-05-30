@@ -147,6 +147,22 @@ button:last-child:hover {
   border-radius: 10px;
 }
 
+.participant-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  background-color: lightseagreen;
+}
+
 .close {
   color: #aaa;
   float: right;
