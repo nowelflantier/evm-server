@@ -80,19 +80,19 @@ const Participants = () => {
   };
 
   const copyToClipboard = (text) => {
-    if (navigator.clipboard) {
-      navigator.clipboard
-        .writeText(text)
-        .then(() => {
-          showToast("Le texte d'invitation a été copié dans le presse-papier.");
-        })
-        .catch((err) => {
-          console.error(
-            "Erreur lors de la copie du texte dans le presse-papier :",
-            err
-          );
-        });
-    } else {
+    // if (navigator.clipboard) {
+    //   navigator.clipboard
+    //     .writeText(text)
+    //     .then(() => {
+    //       showToast("Le texte d'invitation a été copié dans le presse-papier.");
+    //     })
+    //     .catch((err) => {
+    //       console.error(
+    //         "Erreur lors de la copie du texte dans le presse-papier :",
+    //         err
+    //       );
+    //     });
+    // } else {
       const textArea = document.createElement("textarea");
       const selection = window.getSelection();
       const range = document.createRange();
@@ -100,15 +100,11 @@ const Participants = () => {
       textArea.style.position = "fixed"; // Avoid scrolling to bottom of page in MS Edge.
       textArea.style.opacity = "0";
       document.body.appendChild(textArea);
-      range.selectNodeContents(textArea);
-      selection.removeAllRanges();
-      selection.addRange(textArea);
-      // selection.execCommand('copy',true,"");
-      // selection.removeAllRanges();
+  
       textArea.focus();
       textArea.select();
       try {
-        const successful = document.body.appendChild(textArea).execCommand("copy",true,"");
+        const successful = document.execCommand("copy",true,"textArea");
         console.log("Copying text command was " + (successful ? "successful" : "unsuccessful"));
         const msg = successful
           ? "Le texte d'invitation a été copié dans le presse-papier."
@@ -118,7 +114,7 @@ const Participants = () => {
         console.error("Erreur lors de la copie du texte :", err);
       }
       document.body.removeChild(textArea);
-    }
+    // }
   };
 
   const showToast = (message) => {
