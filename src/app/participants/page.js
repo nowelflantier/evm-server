@@ -55,7 +55,6 @@ const Participants = () => {
     try {
       const response = await fetch(`/api/30ans/participants/${participantId}`);
       const data = await response.json();
-      
   
       if (!response.ok) {
         throw new Error(
@@ -63,64 +62,52 @@ const Participants = () => {
             "Erreur lors de la récupération des informations du participant"
         );
       }
-
+  
       const emailShortMetadata = data.guest_metadata.find(
         (metadata) => metadata.name === "email_short_url"
       );
       const invitationLink = emailShortMetadata
         ? emailShortMetadata.value
         : "Lien non disponible";
-
+  
       const invitationText = `Hello ${firstName},\nJ'espère que tu vas bien ? :)\n\nJe ne sais pas si tu avais bien reçu mon mail d'invitation pour mes 30ans, dans le doute voici le lien : ${invitationLink}\n\nHésite pas à me donner une réponse rapidement pour que je puisse finaliser l'orga ! \n\nGrosses bises & à cet été j'espère ! !`;
-
+  
+      // Utiliser la méthode alternative pour copier le texte
       copyToClipboard(invitationText);
     } catch (err) {
       console.error("Erreur lors de la copie du lien :", err);
     }
   };
-
+  
   const copyToClipboard = (text) => {
-    if (navigator.clipboard) {
-      navigator.clipboard
-        .writeText(text)
-        .then(() => {
-          showToast("Le texte d'invitation a été copié dans le presse-papier.");
-        })
-        .catch((err) => {
-          console.error(
-            "Erreur lors de la copie du texte dans le presse-papier :",
-            err
-          );
-        });
-    } else {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
-      textArea.style.position = "fixed"; // Avoid scrolling to bottom of page in MS Edge.
-      textArea.style.opacity = "0";
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      try {
-        const successful = document.execCommand("copy",true,"");
-        const msg = successful
-          ? "Le texte d'invitation a été copié dans le presse-papier."
-          : "Échec de la copie du texte";
-        showToast(msg);
-      } catch (err) {
-        console.error("Erreur lors de la copie du texte :", err);
-      }
-      document.body.removeChild(textArea);
-    }
+    const container = document.createElement("div");
+    container.style.position = "fixed";
+    container.style.pointerEvents = "none";
+    container.style.opacity = 0;
+    container.textContent = text;
+    document.body.appendChild(container);
+  
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(container);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.execCommand('copy');
+    selection.removeAllRanges();
+    document.body.removeChild(container);
+  
+    showToast("Le texte d'invitation a été copié dans le presse-papier !");
   };
+  
 
   const showToast = (message) => {
     Toastify({
       text: message,
       duration: 3000,
       close: true,
-      gravity: "top",
-      position: "right",
-      backgroundColor: "#4CAF50",
+      gravity: "bottom",
+      position: "center",
+      backgroundColor: "#E0B0B8",
       stopOnFocus: true,
     }).showToast();
   };
