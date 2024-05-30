@@ -120,8 +120,15 @@ const Participants = () => {
       close: false,
       gravity: "bottom",
       position: "center",
-      backgroundColor: "#E0B0B8",
+      // backgroundColor: "#E0B0B8",
       stopOnFocus: true,
+      style: {
+        background: "linear-gradient(to right, #E000B8, #E0B0B8)",
+        textAlign: "center",
+        marginLeft: "15px",
+        marginRight: "15px",
+        borderRadius: "10px",
+      },
     }).showToast();
   };
 
