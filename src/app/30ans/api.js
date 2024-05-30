@@ -1,6 +1,10 @@
-export const fetchParticipants = async (companyNameFilter, statusFilter) => {
+export const fetchParticipants = async (companyNameFilter, statusFilter, answerFilter) => {
     let apiUrl = `/api/30ans/participants?search=status%3Aimported%2Cinvited%2Cregistered%20sort%3Alastname-asc`;
-  
+    
+    if (answerFilter) {
+      apiUrl += `%20position%3A${answerFilter}`;
+    }
+
     if (companyNameFilter) {
       apiUrl += `%20company_name%3A${companyNameFilter}`;
     }
@@ -8,6 +12,8 @@ export const fetchParticipants = async (companyNameFilter, statusFilter) => {
     if (statusFilter) {
       apiUrl += `%20status%3A${statusFilter}`;
     }
+
+  
   
     try {
       const response = await fetch(apiUrl);
@@ -21,6 +27,7 @@ export const fetchParticipants = async (companyNameFilter, statusFilter) => {
           firstName: participant.first_name,
           lastName: participant.last_name,
           status: participant.status,
+          reponse: participant.position,
         }));
       } else {
         console.error("Les données reçues ne sont pas valides:", data);

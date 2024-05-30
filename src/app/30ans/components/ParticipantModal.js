@@ -1,6 +1,6 @@
 import React from "react";
 
-const ParticipantModal = ({ participant, companyName, setCompanyName, onSaveChanges, onCloseModal }) => {
+const ParticipantModal = ({ participant, companyName, setCompanyName, onSaveChanges, onCloseModal, answer, setAnswer }) => {
   return (
     <div className="modal">
       <div className="modal-content">
@@ -18,6 +18,15 @@ const ParticipantModal = ({ participant, companyName, setCompanyName, onSaveChan
               style={{ marginRight: "10px" }}
             />
             Relance manuelle faite ?
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={answer}
+              onChange={(e) => setAnswer(e.target.checked)}
+              style={{ marginRight: "10px" }}
+            />
+            Réponse donnée ?
           </label>
           <button className="cta" onClick={onSaveChanges}>
             Enregistrer

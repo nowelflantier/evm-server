@@ -37,7 +37,7 @@ h2 {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Stronger shadow for depth */
   /* backdrop-filter: blur(10px); Blur effect for the glossy look */
   overflow-y: auto;
-  max-height: 70vh;
+  max-height: 80%;
   display: flex;
   flex-direction: column;
   /* justify-content: center; */
@@ -122,6 +122,7 @@ button:last-child:hover {
   color: #0b0b0b;
 }
 
+
 @media (max-width: 600px) {
   button {
     padding: 8px;
@@ -158,11 +159,17 @@ button:last-child:hover {
 
 .participant-details {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
   margin-bottom: 10px;
   margin-top: 10px;
-  flex-direction: column;
+}
+
+.participant-details label {
+  display: flex;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .cta {
