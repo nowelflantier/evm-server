@@ -55,22 +55,49 @@ const Participants = () => {
   
       const invitationText = `Hello ${firstName},\nJ'espère que tu vas bien ? :)\n\nJe ne sais pas si tu avais bien reçu mon mail d'invitation pour mes 30ans, dans le doute voici le lien : ${invitationLink}\n\nHésite pas à me donner une réponse rapidement pour que je puisse finaliser l'orga ! \n\nGrosses bises & à cet été j'espère ! !`;
   
-      navigator.clipboard.writeText(invitationText).then(() => {
-        Toastify({
-          text: "Le texte d'invitation a été copié dans le presse-papier.",
-          duration: 3000,
-          close: true,
-          gravity: "top",
-          position: "right",
-          backgroundColor: "#4CAF50",
-          stopOnFocus: true,
-        }).showToast();
-      });
+      copyToClipboard(invitationText);
     } catch (err) {
       console.error('Erreur lors de la copie du lien :', err);
     }
   };
-  
+
+  const copyToClipboard = (text) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Le texte d'invitation a été copié dans le presse-papier.");
+      }).catch(err => {
+        console.error('Erreur lors de la copie du texte dans le presse-papier :', err);
+      });
+    } else {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";  // Avoid scrolling to bottom of page in MS Edge.
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        const successful = document.execCommand('copy');
+        const msg = successful ? 'Le texte d\'invitation a été copié dans le presse-papier.' : 'Échec de la copie du texte';
+        showToast(msg);
+      } catch (err) {
+        console.error('Erreur lors de la copie du texte :', err);
+      }
+      document.body.removeChild(textArea);
+    }
+  };
+
+  const showToast = (message) => {
+    Toastify({
+      text: message,
+      duration: 3000,
+      close: true,
+      gravity: "top",
+      position: "right",
+      backgroundColor: "#4CAF50",
+      stopOnFocus: true,
+    }).showToast();
+  };
 
   const handleEditParticipant = (participantId) => {
     console.log(`Edit participant with ID: ${participantId}`);
@@ -84,7 +111,6 @@ const Participants = () => {
   return (
     <div className="table-container">
       <h1>Liste des Participants</h1>
-      <h2>{filteredParticipants.length} à relancer</h2>
       <input
         type="text"
         placeholder="Filtrer les participants..."
