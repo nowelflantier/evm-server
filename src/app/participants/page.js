@@ -92,7 +92,7 @@ const Participants = () => {
     selection.addRange(range);
 
     try {
-      const successful = document.execCommand('copy');
+      const successful = document.execCommand('copy',true,"");
       const msg = successful
         ? "Le texte d'invitation a été copié dans le presse-papier."
         : "Échec de la copie du texte";
