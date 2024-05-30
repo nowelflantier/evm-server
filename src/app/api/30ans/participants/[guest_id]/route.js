@@ -10,7 +10,7 @@ export async function GET(request, { params }) {
   try {
     const response = await fetch(`https://app.eventmaker.io/api/v1/events/${eventId}/guests/${guest_id}.json?auth_token=${authToken}&guest_metadata=true`);
     const data = await response.json();
-
+    console.log('Data received from Eventmaker API:', data);
     if (!response.ok) {
       throw new Error(data.error || 'Erreur lors de la récupération des informations du participant');
     }

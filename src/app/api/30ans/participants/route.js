@@ -23,7 +23,7 @@ export async function GET(request) {
       (companyName ? participant.company_name === companyName : true)
     );
 
-    console.log('Filtered participants:', filteredParticipants); // Vérifier les participants filtrés
+    // console.log('Filtered participants:', filteredParticipants); // Vérifier les participants filtrés
 
     return NextResponse.json(filteredParticipants);
   } catch (error) {

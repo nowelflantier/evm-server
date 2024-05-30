@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
+
+
+
 import "./../styles.css";
 
 const Participants = () => {
@@ -16,7 +19,7 @@ const Participants = () => {
   useEffect(() => {
     const fetchParticipants = async () => {
       let apiUrl = `/api/30ans/participants?search=status%3Aimported%2Cinvited%2Cregistered%20sort%3Alastname-asc`;
-      
+
       if (companyNameFilter) {
         apiUrl += `%20company_name%3A${companyNameFilter}`;
       }
@@ -44,7 +47,10 @@ const Participants = () => {
           console.error("Les données reçues ne sont pas valides:", data);
         }
       } catch (error) {
-        console.error("Erreur lors de la récupération des participants:", error);
+        console.error(
+          "Erreur lors de la récupération des participants:",
+          error
+        );
       }
     };
 
@@ -54,69 +60,70 @@ const Participants = () => {
   const handleCopyInvitation = async (firstName, participantId) => {
     try {
       const response = await fetch(`/api/30ans/participants/${participantId}`);
-      const data = await response.json();
       
-  
       if (!response.ok) {
-        throw new Error(
-          data.error ||
-            "Erreur lors de la récupération des informations du participant"
-        );
+        console.error("Erreur lors de la récupération des informations du participant:", response.status, response.statusText);
+        alert(`Erreur: ${response.status} - ${response.statusText}`);
+        throw new Error("Erreur lors de la récupération des informations du participant");
       }
-
+      
+      const data = await response.json();
+  
+      if (!data || typeof data !== 'object') {
+        console.error("Les données reçues ne sont pas valides:", data);
+        alert("Les données reçues ne sont pas valides");
+        return;
+      }
+  
+      if (!Array.isArray(data.guest_metadata)) {
+        console.error("guest_metadata n'est pas un tableau :", data.guest_metadata);
+        alert("guest_metadata n'est pas un tableau");
+        return;
+      }
+  
       const emailShortMetadata = data.guest_metadata.find(
         (metadata) => metadata.name === "email_short_url"
       );
-      const invitationLink = emailShortMetadata
-        ? emailShortMetadata.value
-        : "Lien non disponible";
-
+  
+      if (!emailShortMetadata) {
+        console.error("email_short_url non trouvé dans guest_metadata");
+        alert("email_short_url non trouvé dans guest_metadata");
+        return;
+      }
+  
+      const invitationLink = emailShortMetadata.value || "Lien non disponible";
+  
       const invitationText = `Hello ${firstName},\nJ'espère que tu vas bien ? :)\n\nJe ne sais pas si tu avais bien reçu mon mail d'invitation pour mes 30ans, dans le doute voici le lien : ${invitationLink}\n\nHésite pas à me donner une réponse rapidement pour que je puisse finaliser l'orga ! \n\nGrosses bises & à cet été j'espère !!`;
-
+  
       copyToClipboard(invitationText);
     } catch (err) {
       console.error("Erreur lors de la copie du lien :", err);
+      alert("Erreur lors de la copie du lien :" + err);
     }
   };
-
-  const copyToClipboard = (text) => {
-    // if (navigator.clipboard) {
-    //   navigator.clipboard
-    //     .writeText(text)
-    //     .then(() => {
-    //       showToast("Le texte d'invitation a été copié dans le presse-papier.");
-    //     })
-    //     .catch((err) => {
-    //       console.error(
-    //         "Erreur lors de la copie du texte dans le presse-papier :",
-    //         err
-    //       );
-    //     });
-    // } else {
-      const textArea = document.createElement("textarea");
-      const selection = window.getSelection();
-      const range = document.createRange();
-      textArea.value = text;
-      textArea.style.position = "fixed"; // Avoid scrolling to bottom of page in MS Edge.
-      textArea.style.opacity = "0";
-      document.body.appendChild(textArea);
   
-      textArea.focus();
-      textArea.select();
-      try {
-        const successful = document.execCommand("copy",true,"textArea");
-        console.log("Copying text command was " + (successful ? "successful" : "unsuccessful"));
-        const msg = successful
-          ? "Le texte d'invitation a été copié dans le presse-papier."
-          : "Échec de la copie du texte";
-        showToast(msg);
-      } catch (err) {
-        console.error("Erreur lors de la copie du texte :", err);
-      }
-      document.body.removeChild(textArea);
-    // }
+  const copyToClipboard = (text) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";  // To avoid scrolling to bottom of page in MS Edge.
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+  
+    textArea.focus();
+    textArea.select();
+  
+    try {
+      const successful = document.execCommand('copy');
+      const msg = successful ? 'Le texte d\'invitation a été copié dans le presse-papier.' : 'Échec de la copie du texte';
+      showToast(msg);
+    } catch (err) {
+      console.error('Erreur lors de la copie du texte :', err);
+      showToast('Erreur lors de la copie du texte');
+    }
+  
+    document.body.removeChild(textArea);
   };
-
+  
   const showToast = (message) => {
     Toastify({
       text: message,
@@ -124,7 +131,6 @@ const Participants = () => {
       close: false,
       gravity: "bottom",
       position: "center",
-      // backgroundColor: "#E0B0B8",
       stopOnFocus: true,
       style: {
         background: "linear-gradient(to right, #E000B8, #E0B0B8)",
@@ -135,6 +141,7 @@ const Participants = () => {
       },
     }).showToast();
   };
+  
 
   const handleEditParticipant = async (participantId) => {
     try {
@@ -158,33 +165,35 @@ const Participants = () => {
 
   const handleSaveChanges = async () => {
     if (!selectedParticipant) return;
-  
+
     const updatedData = {
-      "guest": {
-        "company_name": companyName ? "true" : "false",
-      }
+      guest: {
+        company_name: companyName ? "true" : "false",
+      },
     };
-  
+
     try {
-      const response = await fetch(`/api/30ans/participants/${selectedParticipant._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatedData)
-      });
-      
+      const response = await fetch(
+        `/api/30ans/participants/${selectedParticipant._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
+
       if (!response.ok) {
-        throw new Error('Erreur lors de la mise à jour du participant');
+        throw new Error("Erreur lors de la mise à jour du participant");
       }
-  
+
       showToast("Les modifications ont été enregistrées avec succès.");
       closeModal();
     } catch (err) {
-      console.error('Erreur lors de la mise à jour du participant :', err);
+      console.error("Erreur lors de la mise à jour du participant :", err);
     }
   };
-  
 
   const closeModal = () => {
     setSelectedParticipant(null);
@@ -207,12 +216,18 @@ const Participants = () => {
         onChange={(e) => setFilter(e.target.value)}
       />
       <div className="filters">
-        <select onChange={(e) => setCompanyNameFilter(e.target.value)} value={companyNameFilter}>
+        <select
+          onChange={(e) => setCompanyNameFilter(e.target.value)}
+          value={companyNameFilter}
+        >
           <option value="">Toutes les relances</option>
           <option value="true">Relancés uniquement</option>
           <option value="false">Non relancés</option>
         </select>
-        <select onChange={(e) => setStatusFilter(e.target.value)} value={statusFilter}>
+        <select
+          onChange={(e) => setStatusFilter(e.target.value)}
+          value={statusFilter}
+        >
           <option value="">Tous les statuts</option>
           <option value="imported,invited">Importé & invité</option>
           <option value="registered">Inscrit</option>
@@ -232,14 +247,14 @@ const Participants = () => {
               <td>
                 {participant.firstName} {participant.lastName}
               </td>
-              <td>
-                {participant.status}
-              </td>
+              <td>{participant.status}</td>
               <td>
                 <button
-                  onClick={() =>
+                  onClick={() => {
+                    // alert(`firstName: ${participant.firstName}, participantId: ${participant.id}`)
+
                     handleCopyInvitation(participant.firstName, participant.id)
-                  }
+                  }}
                 >
                   <i className="fas fa-copy"></i>
                 </button>
@@ -260,16 +275,18 @@ const Participants = () => {
             </span>
             <h2>Modifier le participant</h2>
             <div className="participant-details">
-            <label>
-              <input
-                type="checkbox"
-                checked={companyName}
-                onChange={(e) => setCompanyName(e.target.checked)}
-                style={{ marginRight: "10px" }}
-              />
-              Relance manuelle faite ?
-            </label>
-            <button class="cta" onClick={handleSaveChanges}>Enregistrer</button>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={companyName}
+                  onChange={(e) => setCompanyName(e.target.checked)}
+                  style={{ marginRight: "10px" }}
+                />
+                Relance manuelle faite ?
+              </label>
+              <button class="cta" onClick={handleSaveChanges}>
+                Enregistrer
+              </button>
             </div>
           </div>
         </div>
