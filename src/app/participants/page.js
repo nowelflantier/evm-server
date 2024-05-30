@@ -202,8 +202,7 @@ const Participants = () => {
         </select>
         <select onChange={(e) => setStatusFilter(e.target.value)} value={statusFilter}>
           <option value="">Tous les statuts</option>
-          <option value="imported">Importé</option>
-          <option value="invited">Invité</option>
+          <option value="imported,invited">Importé & invité</option>
           <option value="registered">Inscrit</option>
         </select>
       </div>

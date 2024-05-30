@@ -19,7 +19,7 @@ export async function GET(request) {
 
     const filteredParticipants = data.filter(participant =>
       (!status || participant.status === status) &&
-      !participant.label_ids.includes('665785e97a1b610094119514') &&
+      // !participant.label_ids.includes('665785e97a1b610094119514') &&
       (companyName ? participant.company_name === companyName : true)
     );
 
