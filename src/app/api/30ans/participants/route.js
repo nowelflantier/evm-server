@@ -8,6 +8,8 @@ export async function GET(request) {
 
   const { searchParams } = new URL(request.url);
   const search = searchParams.get('search');
+  const companyName = searchParams.get('company_name');
+  const status = searchParams.get('status');
 
   try {
     const response = await fetch(`https://app.eventmaker.io/api/v1/events/${eventId}/guests.json?auth_token=${authToken}&search=${search}`);
@@ -16,9 +18,9 @@ export async function GET(request) {
     console.log('Data received from Eventmaker API:', data); // Vérifier les données reçues
 
     const filteredParticipants = data.filter(participant =>
-      (participant.status === 'imported' || participant.status === 'invited') &&
+      (!status || participant.status === status) &&
       !participant.label_ids.includes('665785e97a1b610094119514') &&
-      participant.company_name !== 'true'
+      (companyName ? participant.company_name === companyName : true)
     );
 
     console.log('Filtered participants:', filteredParticipants); // Vérifier les participants filtrés

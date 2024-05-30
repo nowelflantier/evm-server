@@ -21,3 +21,31 @@ export async function GET(request, { params }) {
     return NextResponse.json({ error: 'Error fetching participant details' }, { status: 500 });
   }
 }
+
+export async function PUT(request, { params }) {
+  const { guest_id } = params;
+  const eventId = process.env.EVENTMAKER_EVENT_ID;
+  const authToken = process.env.EVENTMAKER_AUTH_TOKEN;
+  const body = await request.json();
+
+  try {
+    const response = await fetch(`https://app.eventmaker.io/api/v1/events/${eventId}/guests/${guest_id}.json?auth_token=${authToken}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Erreur lors de la mise à jour des informations du participant');
+    }
+
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Error updating participant details:', error);
+    return NextResponse.json({ error: 'Error updating participant details' }, { status: 500 });
+  }
+}
