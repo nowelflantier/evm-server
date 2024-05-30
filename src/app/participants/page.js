@@ -55,7 +55,8 @@ const Participants = () => {
     try {
       const response = await fetch(`/api/30ans/participants/${participantId}`);
       const data = await response.json();
-
+      
+  
       if (!response.ok) {
         throw new Error(
           data.error ||
@@ -100,7 +101,7 @@ const Participants = () => {
       textArea.focus();
       textArea.select();
       try {
-        const successful = document.execCommand("copy");
+        const successful = document.execCommand("copy",true,"");
         const msg = successful
           ? "Le texte d'invitation a été copié dans le presse-papier."
           : "Échec de la copie du texte";
