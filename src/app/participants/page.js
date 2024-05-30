@@ -84,15 +84,15 @@ const Participants = () => {
     span.style.position = "fixed";
     span.style.opacity = 0;
     document.body.appendChild(span);
-
+  
     const range = document.createRange();
     const selection = window.getSelection();
     range.selectNodeContents(span);
     selection.removeAllRanges();
     selection.addRange(range);
-
+  
     try {
-      const successful = document.execCommand('copy',true,"");
+      const successful = document.execCommand('copy');
       const msg = successful
         ? "Le texte d'invitation a été copié dans le presse-papier."
         : "Échec de la copie du texte";
@@ -100,10 +100,11 @@ const Participants = () => {
     } catch (err) {
       console.error("Erreur lors de la copie du texte :", err);
     }
-
+  
     selection.removeAllRanges();
     document.body.removeChild(span);
   };
+  
 
   const showToast = (message) => {
     Toastify({
