@@ -49,13 +49,14 @@ const Participants = () => {
     };
 
     fetchParticipants();
-  }, [companyNameFilter, statusFilter]); 
+  }, [companyNameFilter, statusFilter]); // Add companyNameFilter and statusFilter as dependencies
 
   const handleCopyInvitation = async (firstName, participantId) => {
     try {
       const response = await fetch(`/api/30ans/participants/${participantId}`);
       const data = await response.json();
       
+  
       if (!response.ok) {
         throw new Error(
           data.error ||
@@ -70,7 +71,7 @@ const Participants = () => {
         ? emailShortMetadata.value
         : "Lien non disponible";
 
-      const invitationText = `Hello ${firstName},\nJ'espère que tu vas bien ? :)\n\nJe ne sais pas si tu avais bien reçu mon mail d'invitation pour mes 30ans, dans le doute voici le lien : ${invitationLink}\n\nHésite pas à me donner une réponse rapidement pour que je puisse finaliser l'orga ! \n\nGrosses bises & à cet été j'espère ! !`;
+      const invitationText = `Hello ${firstName},\nJ'espère que tu vas bien ? :)\n\nJe ne sais pas si tu avais bien reçu mon mail d'invitation pour mes 30ans, dans le doute voici le lien : ${invitationLink}\n\nHésite pas à me donner une réponse rapidement pour que je puisse finaliser l'orga ! \n\nGrosses bises & à cet été j'espère !!`;
 
       copyToClipboard(invitationText);
     } catch (err) {
@@ -79,32 +80,46 @@ const Participants = () => {
   };
 
   const copyToClipboard = (text) => {
-    const span = document.createElement("span");
-    span.textContent = text;
-    span.style.position = "fixed";
-    span.style.opacity = 0;
-    document.body.appendChild(span);
-  
-    const range = document.createRange();
-    const selection = window.getSelection();
-    range.selectNodeContents(span);
-    selection.removeAllRanges();
-    selection.addRange(range);
-  
-    try {
-      const successful = document.execCommand('copy');
-      const msg = successful
-        ? "Le texte d'invitation a été copié dans le presse-papier."
-        : "Échec de la copie du texte";
-      showToast(msg);
-    } catch (err) {
-      console.error("Erreur lors de la copie du texte :", err);
+    if (navigator.clipboard) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          showToast("Le texte d'invitation a été copié dans le presse-papier.");
+        })
+        .catch((err) => {
+          console.error(
+            "Erreur lors de la copie du texte dans le presse-papier :",
+            err
+          );
+        });
+    } else {
+      const textArea = document.createElement("textarea");
+      const selection = window.getSelection();
+      const range = document.createRange();
+      textArea.value = text;
+      textArea.style.position = "fixed"; // Avoid scrolling to bottom of page in MS Edge.
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      range.selectNodeContents(textArea);
+      selection.removeAllRanges();
+      selection.addRange(textArea);
+      // selection.execCommand('copy',true,"");
+      // selection.removeAllRanges();
+      textArea.focus();
+      textArea.select();
+      try {
+        const successful = document.body.appendChild(textArea).execCommand("copy",true,"");
+        console.log("Copying text command was " + (successful ? "successful" : "unsuccessful"));
+        const msg = successful
+          ? "Le texte d'invitation a été copié dans le presse-papier."
+          : "Échec de la copie du texte";
+        showToast(msg);
+      } catch (err) {
+        console.error("Erreur lors de la copie du texte :", err);
+      }
+      document.body.removeChild(textArea);
     }
-  
-    selection.removeAllRanges();
-    document.body.removeChild(span);
   };
-  
 
   const showToast = (message) => {
     Toastify({
@@ -113,6 +128,8 @@ const Participants = () => {
       close: false,
       gravity: "bottom",
       position: "center",
+      // backgroundColor: "#E0B0B8",
+      stopOnFocus: true,
       style: {
         background: "linear-gradient(to right, #E000B8, #E0B0B8)",
         textAlign: "center",
