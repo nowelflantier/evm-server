@@ -80,8 +80,7 @@ const Participants = () => {
   };
 
   const copyToClipboard = (text) => {
-    if (navigator.clipboard) {
-      navigator.clipboard
+    navigator.clipboard
         .writeText(text)
         .then(() => {
           showToast("Le texte d'invitation a été copié dans le presse-papier.");
@@ -92,25 +91,37 @@ const Participants = () => {
             err
           );
         });
-    } else {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
-      textArea.style.position = "fixed"; // Avoid scrolling to bottom of page in MS Edge.
-      textArea.style.opacity = "0";
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      try {
-        const successful = document.execCommand("copy",true,"");
-        const msg = successful
-          ? "Le texte d'invitation a été copié dans le presse-papier."
-          : "Échec de la copie du texte";
-        showToast(msg);
-      } catch (err) {
-        console.error("Erreur lors de la copie du texte :", err);
-      }
-      document.body.removeChild(textArea);
-    }
+    // if (navigator.clipboard) {
+    //   navigator.clipboard
+    //     .writeText(text)
+    //     .then(() => {
+    //       showToast("Le texte d'invitation a été copié dans le presse-papier.");
+    //     })
+    //     .catch((err) => {
+    //       console.error(
+    //         "Erreur lors de la copie du texte dans le presse-papier :",
+    //         err
+    //       );
+    //     });
+    // } else {
+    //   const textArea = document.createElement("textarea");
+    //   textArea.value = text;
+    //   textArea.style.position = "fixed"; // Avoid scrolling to bottom of page in MS Edge.
+    //   textArea.style.opacity = "0";
+    //   document.body.appendChild(textArea);
+    //   textArea.focus();
+    //   textArea.select();
+    //   try {
+    //     const successful = document.execCommand("copy",true,"");
+    //     const msg = successful
+    //       ? "Le texte d'invitation a été copié dans le presse-papier."
+    //       : "Échec de la copie du texte";
+    //     showToast(msg);
+    //   } catch (err) {
+    //     console.error("Erreur lors de la copie du texte :", err);
+    //   }
+    //   document.body.removeChild(textArea);
+    // }
   };
 
   const showToast = (message) => {
